@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - CustomerApiApplication",
+            "request": "launch",
+            "mainClass": "jar.CustomerApiApplication",
+            "projectName": "CustomerApi"
+        }
+    ]
+}
