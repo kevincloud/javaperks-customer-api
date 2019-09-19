@@ -20,9 +20,9 @@ jobs:
           path: target/javaperks-customer-api-0.1.0-SNAPSHOT.jar
       - aws-s3/sync:
           from: target
-          to: 's3://my-s3-bucket-name/jars'
+          to: 's3://my-s3-bucket-name'
           arguments: |
-            --acl public-read \
+            --acl public-read
           overwrite: true
       - aws-s3/copy:
           from: target/javaperks-customer-api-0.1.0-SNAPSHOT.jar
