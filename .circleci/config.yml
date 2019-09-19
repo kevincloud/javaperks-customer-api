@@ -16,9 +16,9 @@ jobs:
           key: javaperks-customer-api-{{ checksum "pom.xml" }}
       - run: mvn package
       - store_artifacts:
-          path: target/javaperks-customer-api-0.1.0-SNAPSHOT.jar
+          path: target/target/CustomerApi-0.1.0-SNAPSHOT.jar
       - aws-s3/copy:
-          from: target/javaperks-customer-api-0.1.0-SNAPSHOT.jar
+          from: target/target/CustomerApi-0.1.0-SNAPSHOT.jar
           to: 's3://my-s3-bucket-name/jars/javaperks-customer-api-0.1.0-SNAPSHOT.jar'
           arguments: |
             --acl public-read
