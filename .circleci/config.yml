@@ -1,4 +1,6 @@
-version: 2
+version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3
 jobs:
   build:
     working_directory: ~/javaperks-customer-api
@@ -6,11 +8,6 @@ jobs:
       - image: circleci/openjdk:8-jdk-stretch
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --no-cache py-pip
-            pip install awscli
       - restore_cache:
           key: javaperks-customer-api-{{ checksum "pom.xml" }}
       - run: mvn dependency:go-offline
@@ -21,8 +18,13 @@ jobs:
       - run: mvn package
       - store_artifacts:
           path: target/javaperks-customer-api-0.1.0-SNAPSHOT.jar
-      - deploy:
-          name: Upload to S3
-          command: |
-            aws s3 cp target/javaperks-customer-api-0.1.0-SNAPSHOT.jar s3://jubican-public/jars/javaperks-customer-api-0.1.0-SNAPSHOT.jar --region=us-west-2
-
+      - aws-s3/sync:
+          from: target
+          to: 's3://my-s3-bucket-name/jars'
+          arguments: |
+            --acl public-read \
+          overwrite: true
+      - aws-s3/copy:
+          from: target/javaperks-customer-api-0.1.0-SNAPSHOT.jar
+          to: 's3://my-s3-bucket-name/jars/'
+          arguments: '--region=us-west-2'
