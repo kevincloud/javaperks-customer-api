@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/javaperks-customer-api
+    docker:
+      - image: circleci/openjdk:8-jdk-stretch
+    steps:
+      - checkout
+      - restore_cache:
+          key: javaperks-customer-api-{{ checksum "pom.xml" }}
+      - run: mvn dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: javaperks-customer-api-{{ checksum "pom.xml" }}
+      - run: mvn package
+      - store_artifacts:
+          path: target/javaperks-customer-api-0.1.0-SNAPSHOT.jar
