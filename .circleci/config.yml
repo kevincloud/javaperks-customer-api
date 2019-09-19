@@ -27,4 +27,3 @@ jobs:
       - aws-s3/copy:
           from: target/javaperks-customer-api-0.1.0-SNAPSHOT.jar
           to: 's3://my-s3-bucket-name/jars/'
-          arguments: '--region=us-west-2'
