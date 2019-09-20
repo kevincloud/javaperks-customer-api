@@ -16,9 +16,9 @@ jobs:
             - ~/.m2
           key: javaperks-customer-api-{{ checksum "pom.xml" }}
       - store_artifacts:
-          path: target/CustomerApi-0.1.0-SNAPSHOT.jar
+          path: target/javaperks-customer-api-0.1.0.jar
       - aws-s3/copy:
-          from: target/CustomerApi-0.1.0-SNAPSHOT.jar
-          to: 's3://jubican-public/jars/CustomerApi-0.1.0-SNAPSHOT.jar'
+          from: target/javaperks-customer-api-0.1.0.jar
+          to: 's3://jubican-public/jars/javaperks-customer-api-0.1.0.jar'
           arguments: |
             --acl public-read
