@@ -19,6 +19,6 @@ jobs:
           path: target/CustomerApi-0.1.0-SNAPSHOT.jar
       - aws-s3/copy:
           from: target/CustomerApi-0.1.0-SNAPSHOT.jar
-          to: 's3://jubican-public/jars/javaperks-customer-api-0.1.0-SNAPSHOT.jar'
+          to: 's3://jubican-public/jars/CustomerApi-0.1.0-SNAPSHOT.jar'
           arguments: |
             --acl public-read
