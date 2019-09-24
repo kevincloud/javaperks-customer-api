@@ -1,8 +1,8 @@
 package com.javaperks.api.db;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-// import java.util.Date;
 import java.lang.Integer;
 
 import java.sql.DriverManager;
@@ -11,25 +11,48 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.javaperks.api.ISecretsManager;
+import com.bettercloud.vault.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CustomerDb
+public class CustomerDb implements ICustomerDb
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDb.class);
 
+    private Vault vault;
+    private String vaultaddr;
+    private String vaulttoken;
     private String connstr;
     private String dbuser;
     private String dbpass;
     private String dbserver;
     private String database;
 
-    public CustomerDb(String server, String database, String username, String password)
+    public CustomerDb(ISecretsManager config) throws Exception
     {
-        this.dbserver = server;
-        this.database = database;
-        this.dbuser = username;
-        this.dbpass = password;
+        VaultConfig vaultConfig;
+
+        this.vaultaddr = config.getSecretsUrl();
+        this.vaulttoken = config.getSecretsToken();
+
+        try
+        {
+            vaultConfig = new VaultConfig()
+                .address(this.vaultaddr)
+                .token(this.vaulttoken)
+                .build();
+        } catch ( VaultException ex) {
+            throw new Exception("Could not initialize Vault session.");
+        }
+
+        this.vault = new Vault(vaultConfig);
+
+        this.dbserver = vault.logical().read("secret/dbhost").getData().get("address");
+        this.dbuser = vault.logical().read("secret/dbhost").getData().get("username");
+        this.dbpass = vault.logical().read("secret/dbhost").getData().get("password");
+        this.database = vault.logical().read("secret/dbhost").getData().get("database");
 
         connstr = "jdbc:mysql://" + this.dbserver + "/" + this.database + "?useSSL=false";
     }

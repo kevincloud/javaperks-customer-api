@@ -13,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.javaperks.api.db.*;
-import com.bettercloud.vault.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,82 +21,52 @@ import org.slf4j.LoggerFactory;
 @Path("/customers")
 public class CustomerInterface
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDb.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerInterface.class);
 
-    private Vault vault;
-    private String vaultaddr;
-    private String vaulttoken;
-    private String dbserver;
-    private String username;
-    private String password;
-    private String database;
-    private final Validator validator;
+    private ICustomerDb cdb;
 
-    public CustomerInterface(Validator validator, String vaultAddress, String vaultToken) throws Exception {
-        VaultConfig vaultConfig;
-
-        this.validator = validator;
-        this.vaultaddr = vaultAddress;
-        this.vaulttoken = vaultToken;
-
-        try
-        {
-            vaultConfig = new VaultConfig()
-            .address(this.vaultaddr)
-            .token(this.vaulttoken)
-            .build();
-        } catch ( VaultException ex) {
-            throw new Exception("Could not initialize Vault session.");
-        }
-
-        this.vault = new Vault(vaultConfig);
-
-        this.dbserver = vault.logical().read("secret/dbhost").getData().get("address");
-        this.username = vault.logical().read("secret/dbhost").getData().get("username");
-        this.password = vault.logical().read("secret/dbhost").getData().get("password");
-        this.database = vault.logical().read("secret/dbhost").getData().get("database");
+    public CustomerInterface(ICustomerDb database) throws Exception {
+        this.cdb = database;
     }
 
-    @GET
-    public Response getCustomers()
-    {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-
-        return Response.ok(cdb.getCustomers()).build();
-    }
+    // @GET
+    // public Response getCustomers()
+    // {
+    //     return Response.ok(this.cdb.getCustomers()).build();
+    // }
 
     @GET
     @Path("/{id}")
     public Response getCustomerById(@PathParam("id") String id) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.getCustomerById(id)).build();
+        LOGGER.info("getCustomerById: id = " + id);
+        return Response.ok(this.cdb.getCustomerById(id)).build();
+    }
+
+    @GET
+    @Path("/address/{id}")
+    public Response getAddressById(@PathParam("id") int id) {
+        LOGGER.info("getAddressById: id = " + id);
+        return Response.ok(this.cdb.getAddressById(id)).build();
     }
 
     @PUT
     @Path("/info/{id}")
     public Response updatePersonalInfo(Customer customer) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.updatePersonalInfo(customer)).build();
+        LOGGER.info("updatePersonalInfo: customer = " + customer.toString());
+        return Response.ok(this.cdb.updatePersonalInfo(customer)).build();
     }
 
     @PUT
     @Path("/email/{id}")
     public Response updateEmailAddress(Customer customer) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.updateEmailAddress(customer)).build();
-    }
-
-    @GET
-    @Path("/address/{id}")
-    public Response updateAddress(@PathParam("id") int id) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.getAddressById(id)).build();
+        LOGGER.info("updateEmailAddress: customer = " + customer.toString());
+        return Response.ok(this.cdb.updateEmailAddress(customer)).build();
     }
 
     @PUT
     @Path("/address/{id}")
     public Response updateAddress(Address address) {
-        CustomerDb cdb = new CustomerDb(this.dbserver, this.database, this.username, this.password);
-        return Response.ok(cdb.updateAddress(address)).build();
+        LOGGER.info("updateAddress: address = " + address.toString());
+        return Response.ok(this.cdb.updateAddress(address)).build();
     }
 }

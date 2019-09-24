@@ -5,11 +5,15 @@ import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 // import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-// import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.JerseyClientBuilder;
+import javax.ws.rs.client.Client;
 
 import com.javaperks.api.api.CustomerInterface;
+import com.javaperks.api.api.HealthCheckInterface;
 import com.javaperks.api.api.PaymentInterface;
+import com.javaperks.api.db.*;
 import com.javaperks.api.api.InvoiceInterface;
+import com.javaperks.api.health.AppHealthCheck;
 
 // import javax.ws.rs.client.Client;
 
@@ -36,14 +40,20 @@ public class CustomerApiApplication extends Application<CustomerApiConfiguration
     public void run(CustomerApiConfiguration c, Environment e) throws Exception {
         LOGGER.info("Registering API Resources");
 
-        final CustomerInterface ci = new CustomerInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
+        VaultManager vaultconfig = new VaultManager(c.getVaultAddress(), c.getVaultToken());
+        ICustomerDb cdb = new CustomerDb(vaultconfig);
+        e.healthChecks().register("ApiHealthCheck", new AppHealthCheck());
+
+        final CustomerInterface ci = new CustomerInterface(cdb);
         final PaymentInterface pi = new PaymentInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
         final InvoiceInterface ii = new InvoiceInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
+        final HealthCheckInterface hci = new HealthCheckInterface(e.healthChecks());
 
         e.jersey().register(new JsonProcessingExceptionMapper(true));
         e.jersey().register(ci);
         e.jersey().register(pi);
         e.jersey().register(ii);
+        e.jersey().register(hci);
     }
 
 }
