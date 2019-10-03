@@ -49,6 +49,12 @@ public class CustomerDb implements ICustomerDb
 
         this.vault = new Vault(vaultConfig);
 
+        String username = vault.database("custdbcreds").creds("cust-api-role").getCredential().getUsername();
+        String password = vault.database("custdbcreds").creds("cust-api-role").getCredential().getPassword();
+
+        LOGGER.info("Username: " + username + "\n");
+        LOGGER.info("Password: " + password + "\n");
+
         this.dbserver = vault.logical().read("secret/dbhost").getData().get("address");
         this.dbuser = vault.logical().read("secret/dbhost").getData().get("username");
         this.dbpass = vault.logical().read("secret/dbhost").getData().get("password");
