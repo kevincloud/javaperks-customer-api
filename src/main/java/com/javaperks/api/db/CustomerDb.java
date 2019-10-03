@@ -29,6 +29,8 @@ public class CustomerDb implements ICustomerDb
     private String dbpass;
     private String dbserver;
     private String database;
+    private String t_username;
+    private String t_password;
 
     public CustomerDb(ISecretsManager config) throws Exception
     {
@@ -49,11 +51,8 @@ public class CustomerDb implements ICustomerDb
 
         this.vault = new Vault(vaultConfig);
 
-        String username = vault.database("custdbcreds").creds("cust-api-role").getCredential().getUsername();
-        String password = vault.database("custdbcreds").creds("cust-api-role").getCredential().getPassword();
-
-        LOGGER.info("Username: " + username + "\n");
-        LOGGER.info("Password: " + password + "\n");
+        this.t_username = vault.database("custdbcreds").creds("cust-api-role").getCredential().getUsername();
+        this.t_password = vault.database("custdbcreds").creds("cust-api-role").getCredential().getPassword();
 
         this.dbserver = vault.logical().read("secret/dbhost").getData().get("address");
         this.dbuser = vault.logical().read("secret/dbhost").getData().get("username");
@@ -204,6 +203,9 @@ public class CustomerDb implements ICustomerDb
 
     public Customer getCustomerById(String id) {
         LOGGER.info("Get a customer by custid");
+        LOGGER.info("Username: " + t_username);
+        LOGGER.info("Password: " + t_password);
+
         Customer customer = null;
 
         try (Connection cn = DriverManager.getConnection(this.connstr, this.dbuser, this.dbpass))
