@@ -197,6 +197,9 @@ public class CustomerDb implements ICustomerDb
 
     public Customer getCustomerById(String id) {
         LOGGER.info("Get a customer by custid");
+        LOGGER.info("Connection string: " + this.connstr);
+        LOGGER.info("Username: " + this.dbuser);
+        LOGGER.info("Password: " + this.dbpass);
 
         Customer customer = null;
 
