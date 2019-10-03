@@ -1,7 +1,6 @@
 package com.javaperks.api.db;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.lang.Integer;
 
@@ -29,8 +28,6 @@ public class CustomerDb implements ICustomerDb
     private String dbpass;
     private String dbserver;
     private String database;
-    private String t_username;
-    private String t_password;
 
     public CustomerDb(ISecretsManager config) throws Exception
     {
@@ -51,12 +48,9 @@ public class CustomerDb implements ICustomerDb
 
         this.vault = new Vault(vaultConfig);
 
-        this.t_username = vault.database("custdbcreds").creds("cust-api-role").getCredential().getUsername();
-        this.t_password = vault.database("custdbcreds").creds("cust-api-role").getCredential().getPassword();
-
         this.dbserver = vault.logical().read("secret/dbhost").getData().get("address");
-        this.dbuser = vault.logical().read("secret/dbhost").getData().get("username");
-        this.dbpass = vault.logical().read("secret/dbhost").getData().get("password");
+        this.dbuser = vault.database("custdbcreds").creds("cust-api-role").getCredential().getUsername();
+        this.dbpass = vault.database("custdbcreds").creds("cust-api-role").getCredential().getPassword();
         this.database = vault.logical().read("secret/dbhost").getData().get("database");
 
         connstr = "jdbc:mysql://" + this.dbserver + "/" + this.database + "?useSSL=false";
@@ -203,8 +197,6 @@ public class CustomerDb implements ICustomerDb
 
     public Customer getCustomerById(String id) {
         LOGGER.info("Get a customer by custid");
-        LOGGER.info("Username: " + t_username);
-        LOGGER.info("Password: " + t_password);
 
         Customer customer = null;
 
