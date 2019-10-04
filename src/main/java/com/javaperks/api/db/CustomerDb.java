@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 import com.javaperks.api.ISecretsManager;
 import com.bettercloud.vault.*;
+import com.bettercloud.vault.api.database.DatabaseCredential;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +50,6 @@ public class CustomerDb implements ICustomerDb
         this.vault = new Vault(vaultConfig);
 
         this.dbserver = vault.logical().read("secret/dbhost").getData().get("address");
-        this.dbuser = vault.database("custdbcreds").creds("cust-api-role").getCredential().getUsername();
-        this.dbpass = vault.database("custdbcreds").creds("cust-api-role").getCredential().getPassword();
         this.database = vault.logical().read("secret/dbhost").getData().get("database");
 
         connstr = "jdbc:mysql://" + this.dbserver + "/" + this.database + "?useSSL=false";
@@ -197,7 +196,15 @@ public class CustomerDb implements ICustomerDb
 
     public Customer getCustomerById(String id) {
         LOGGER.info("Get a customer by custid");
-        LOGGER.info("Connection string: " + this.connstr);
+
+        try {
+            DatabaseCredential creds = vault.database("custdbcreds").creds("cust-api-role").getCredential();
+            this.dbuser = creds.getUsername();
+            this.dbpass = creds.getPassword();
+        } catch (VaultException ex) {
+            LOGGER.error("Error: " + ex.getMessage());
+        }
+
         LOGGER.info("Username: " + this.dbuser);
         LOGGER.info("Password: " + this.dbpass);
 
