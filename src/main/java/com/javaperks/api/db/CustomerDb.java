@@ -46,15 +46,17 @@ public class CustomerDb implements ICustomerDb
             throw new Exception("Could not initialize Vault session.");
         }
 
-        InitVault();
-    }
-
-    private void InitVault() throws VaultException {
-        this.vault = new Vault(this.vaultConfig);
+        this.vault = InitVault();
         this.dbserver = this.vault.logical().read("secret/dbhost").getData().get("address");
         this.database = this.vault.logical().read("secret/dbhost").getData().get("database");
 
         this.connstr = "jdbc:mysql://" + this.dbserver + "/" + this.database + "?useSSL=false";
+    }
+
+    private Vault InitVault() throws VaultException {
+        Vault vault = new Vault(this.vaultConfig);
+
+        return vault;
     }
 
     public List<Customer> getCustomers() {
@@ -198,15 +200,17 @@ public class CustomerDb implements ICustomerDb
 
     public Customer getCustomerById(String id) {
         LOGGER.info("Get a customer by custid");
+        Vault v;
 
         try {
-            InitVault();
+            v = InitVault();
         } catch (VaultException ex) {
             LOGGER.error("Error: " + ex.getMessage());
+            return null;
         }
 
         try {
-            DatabaseCredential creds = vault.database("custdbcreds").creds("cust-api-role").getCredential();
+            DatabaseCredential creds = v.database("custdbcreds").creds("cust-api-role").getCredential();
             this.dbuser = creds.getUsername();
             this.dbpass = creds.getPassword();
         } catch (VaultException ex) {
