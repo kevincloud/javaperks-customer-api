@@ -5,8 +5,8 @@ import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 // import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.client.JerseyClientBuilder;
-import javax.ws.rs.client.Client;
+// import io.dropwizard.client.JerseyClientBuilder;
+// import javax.ws.rs.client.Client;
 
 import com.javaperks.api.api.CustomerInterface;
 import com.javaperks.api.api.HealthCheckInterface;

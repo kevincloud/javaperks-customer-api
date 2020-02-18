@@ -6,9 +6,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javassist.bytecode.stackmap.BasicBlock.Catch;
+// import javassist.bytecode.stackmap.BasicBlock.Catch;
 
-import java.sql.Connection;
+// import java.sql.Connection;
 
 public class BaseDb
 {
@@ -17,7 +17,7 @@ public class BaseDb
     private String dbpass;
     private String dbserver;
     private String database;
-    private Connection cn;
+    // private Connection cn;
 
     public BaseDb(String server, String database, String username, String password) {
         this.dbserver = server;

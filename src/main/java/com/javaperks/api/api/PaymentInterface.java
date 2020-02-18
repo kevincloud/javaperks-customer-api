@@ -16,14 +16,14 @@ import javax.ws.rs.core.Response;
 import com.javaperks.api.db.*;
 import com.bettercloud.vault.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/payments")
 public class PaymentInterface
 {
-	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDb.class);
+	// private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDb.class);
 
     private Vault vault;
     private String vaultaddr;
@@ -32,12 +32,12 @@ public class PaymentInterface
     private String username;
     private String password;
     private String database;
-    private final Validator validator;
+    // private final Validator validator;
 
     public PaymentInterface(Validator validator, String vaultAddress, String vaultToken) throws Exception {
         VaultConfig vaultConfig;
 
-        this.validator = validator;
+        // this.validator = validator;
         this.vaultaddr = vaultAddress;
         this.vaulttoken = vaultToken;
 
