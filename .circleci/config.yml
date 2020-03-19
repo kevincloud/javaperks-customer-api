@@ -6,19 +6,42 @@ jobs:
     working_directory: ~/javaperks-customer-api
     docker:
       - image: circleci/openjdk:11-jdk-stretch
+      - image: circleci/golang:1.12.9
     steps:
       - checkout
+      - setup_remote_docker
       - restore_cache:
           key: javaperks-customer-api-{{ checksum "pom.xml" }}
       - run: mvn package
+      - store_artifacts:
+          path: target/javaperks-customer-api-0.2.6.jar
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i caches/javaperks-customer-api.tar | true
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build --cache-from=javaperks-customer-api -t jubican/javaperks-customer-api:0.2.6 .
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p caches
+            docker save -o caches/javaperks-customer-api.tar jubican/javaperks-customer-api
       - save_cache:
           paths:
             - ~/.m2
           key: javaperks-customer-api-{{ checksum "pom.xml" }}
-      - store_artifacts:
-          path: target/javaperks-customer-api-0.2.6.jar
       - aws-s3/copy:
           from: target/javaperks-customer-api-0.2.6.jar
           to: 's3://jubican-public/jars/javaperks-customer-api-0.2.6.jar'
           arguments: |
             --acl public-read
+      - deploy:
+          name: Push application Docker image
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+              docker push jubican/javaperks-customer-api:0.2.6
+            fi
