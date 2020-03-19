@@ -6,7 +6,6 @@ jobs:
     working_directory: ~/javaperks-customer-api
     docker:
       - image: circleci/openjdk:11-jdk-stretch
-      - image: circleci/golang:1.12.9
     steps:
       - checkout
       - setup_remote_docker
