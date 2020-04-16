@@ -40,13 +40,16 @@ public class CustomerApiApplication extends Application<CustomerApiConfiguration
     public void run(CustomerApiConfiguration c, Environment e) throws Exception {
         LOGGER.info("Registering API Resources");
 
-        VaultManager vaultconfig = new VaultManager(c.getVaultAddress(), c.getVaultToken());
+        String vaultAddress = System.getenv("VAULT_ADDRESS");
+        String vaultToken = System.getenv("VAULT_TOKEN");
+
+        VaultManager vaultconfig = new VaultManager(vaultAddress, vaultToken);
         ICustomerDb cdb = new CustomerDb(vaultconfig);
         e.healthChecks().register("ApiHealthCheck", new AppHealthCheck());
 
         final CustomerInterface ci = new CustomerInterface(cdb);
-        final PaymentInterface pi = new PaymentInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
-        final InvoiceInterface ii = new InvoiceInterface(e.getValidator(), c.getVaultAddress(), c.getVaultToken());
+        final PaymentInterface pi = new PaymentInterface(e.getValidator(), vaultAddress, vaultToken);
+        final InvoiceInterface ii = new InvoiceInterface(e.getValidator(), vaultAddress, vaultToken);
         final HealthCheckInterface hci = new HealthCheckInterface(e.healthChecks());
 
         e.jersey().register(new JsonProcessingExceptionMapper(true));
