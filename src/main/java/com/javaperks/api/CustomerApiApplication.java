@@ -40,7 +40,7 @@ public class CustomerApiApplication extends Application<CustomerApiConfiguration
     public void run(CustomerApiConfiguration c, Environment e) throws Exception {
         LOGGER.info("Registering API Resources");
 
-        String vaultAddress = System.getenv("VAULT_ADDRESS");
+        String vaultAddress = System.getenv("VAULT_ADDR");
         String vaultToken = System.getenv("VAULT_TOKEN");
 
         VaultManager vaultconfig = new VaultManager(vaultAddress, vaultToken);
