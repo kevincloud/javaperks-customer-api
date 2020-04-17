@@ -12,4 +12,4 @@ RUN chmod +x /app/bootstrap.sh
 
 WORKDIR /app
 
-ENTRYPOINT [ "bootstrap.sh" ]
+ENTRYPOINT [ "/app/bootstrap.sh" ]

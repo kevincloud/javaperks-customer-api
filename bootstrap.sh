@@ -8,4 +8,4 @@ export VAULT_TOKEN=$(curl --request POST \
   --data "{\"jwt\": \"$KUBE_TOKEN\", \"role\": \"cust-api\"}" \
   $VAULT_ADDR/v1/auth/kubernetes/login | jq -r .auth.client_token) && echo $VAULT_TOKEN
 
-java -jar /app/javaperks-customer-api.jar server /app/config.yml
+java -jar javaperks-customer-api.jar server config.yml
