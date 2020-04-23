@@ -9,8 +9,7 @@ ADD target/javaperks-customer-api-0.2.8.jar /app/javaperks-customer-api.jar
 ADD config.yml /app/config.yml
 ADD bootstrap.sh /app/bootstrap.sh
 RUN chmod +x /app/bootstrap.sh
-RUN . /app/bootstrap.sh
 
 WORKDIR /app
 
-ENTRYPOINT [ "java", "-jar", "/app/javaperks-customer-api.jar", "server", "/app/config.yml" ]
+ENTRYPOINT [ "/app/bootstrap.sh" ]

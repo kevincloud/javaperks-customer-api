@@ -6,7 +6,9 @@ export VAULT_TOKEN=$(curl --request POST \
   $VAULT_ADDR/v1/auth/kubernetes/login | jq -r .auth.client_token) && echo $VAULT_TOKEN
 
 mv /app/config.yml /app/xconfig.yml
-echo "vaultAddress: $VAULT_ADDR" >>/app/xconfig.yml
-echo "vaultToken: $VAULT_TOKEN" >>/app/xconfig.yml
+echo "vaultAddress: ${VAULT_ADDR}" >>/app/xconfig.yml
+echo "vaultToken: ${VAULT_TOKEN}" >>/app/xconfig.yml
 cat /app/xconfig.yml | sed '/^$/d' >/app/config.yml
 rm /app/xconfig.yml
+
+java -jar /app/javaperks-customer-api.jar server /app/config.yml
