@@ -13,7 +13,7 @@ jobs:
           key: javaperks-customer-api-{{ checksum "pom.xml" }}
       - run: mvn package
       - store_artifacts:
-          path: target/javaperks-customer-api-0.2.7.jar
+          path: target/javaperks-customer-api-0.2.8.jar
       - run:
           name: Load Docker image layer cache
           command: |
@@ -22,7 +22,7 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build --cache-from=javaperks-customer-api -t jubican/javaperks-customer-api:0.2.7 .
+            docker build --cache-from=javaperks-customer-api -t jubican/javaperks-customer-api:0.2.8 .
       - run:
           name: Save Docker image layer cache
           command: |
@@ -33,8 +33,8 @@ jobs:
             - ~/.m2
           key: javaperks-customer-api-{{ checksum "pom.xml" }}
       - aws-s3/copy:
-          from: target/javaperks-customer-api-0.2.7.jar
-          to: 's3://jubican-public/jars/javaperks-customer-api-0.2.7.jar'
+          from: target/javaperks-customer-api-0.2.8.jar
+          to: 's3://jubican-public/jars/javaperks-customer-api-0.2.8.jar'
           arguments: |
             --acl public-read
       - deploy:
@@ -42,5 +42,5 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-              docker push jubican/javaperks-customer-api:0.2.7
+              docker push jubican/javaperks-customer-api:0.2.8
             fi
