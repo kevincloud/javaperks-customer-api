@@ -13,4 +13,4 @@ RUN . /app/bootstrap.sh
 
 WORKDIR /app
 
-ENTRYPOINT [ "java", "-jar", "javaperks-customer-api.jar", "server config.yml" ]
+ENTRYPOINT [ "java", "-jar", "/app/javaperks-customer-api.jar", "server", "/app/config.yml" ]
