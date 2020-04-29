@@ -11,4 +11,8 @@ echo "vaultToken: ${VAULT_TOKEN}" >>/app/xconfig.yml
 cat /app/xconfig.yml | sed '/^$/d' >/app/config.yml
 rm /app/xconfig.yml
 
+if [ ! -z $LOCALHOST_ONLY ]; then
+  sed -i 's/^\(\s*bindHost: \).*/\1127\.0\.0\.1/' /app/config.yml
+fi
+
 java -jar /app/javaperks-customer-api.jar server /app/config.yml
